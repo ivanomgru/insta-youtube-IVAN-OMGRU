@@ -366,4 +366,25 @@
     max-width: calc(50% - 12px);
     font-size: 0.88rem;
   }
+
+}
+/* =========================
+   اصلاحات RTL مخصوص موبایل
+========================= */
+@media (max-width: 767px) {
+  body[dir="rtl"] #ytGallery .media-card p,
+  body[dir="rtl"] #igGallery .media-card p {
+    left: auto;
+    right: 10px; /* کپشن سمت راست باشد */
+  }
+
+  body[dir="rtl"] .overlay-link {
+    left: auto;
+    right: 8px; /* overlay سمت راست */
+  }
+
+  body[dir="rtl"] .btn-sort {
+    text-align: center;
+    margin: 5px auto;
+  }
 }
