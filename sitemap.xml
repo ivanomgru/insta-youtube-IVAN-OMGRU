@@ -1,33 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- صفحه اصلی اینستاگرام -->
   <url>
     <loc>https://insta.ivan-omgru.ir/</loc>
     <lastmod>2025-09-09</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
+
+  <!-- پست‌های آرشیوی -->
   <url>
     <loc>https://insta.ivan-omgru.ir/posts/insta-2025-01-01-post1</loc>
     <lastmod>2025-01-01</lastmod>
-    <changefreq>never</changefreq>
+    <changefreq>yearly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://insta.ivan-omgru.ir/posts/insta-2025-02-01-post2</loc>
     <lastmod>2025-02-01</lastmod>
-    <changefreq>never</changefreq>
+    <changefreq>yearly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://insta.ivan-omgru.ir/posts/insta-2025-03-01-post3</loc>
     <lastmod>2025-03-01</lastmod>
-    <changefreq>never</changefreq>
+    <changefreq>yearly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://insta.ivan-omgru.ir/posts/insta-2025-04-01-post4</loc>
     <lastmod>2025-04-01</lastmod>
-    <changefreq>never</changefreq>
+    <changefreq>yearly</changefreq>
     <priority>0.7</priority>
   </url>
 </urlset>
