@@ -1070,10 +1070,6 @@ footer .footer-copy {
   box-shadow: 0 0 6px rgba(0,212,255,0.35);
   outline: none;
 }
-/* =========================
-   لودینگ اسکرین حرفه‌ای و لایت‌باکس
-========================= */
-
 /* لودینگ اسکرین */
 #loading-screen {
   position: fixed;
@@ -1132,4 +1128,3 @@ footer .footer-copy {
   z-index:1;
   text-shadow: 0 2px 6px rgba(0,0,0,0.8);
 }
-
