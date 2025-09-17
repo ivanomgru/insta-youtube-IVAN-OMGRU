@@ -1002,7 +1002,69 @@ footer .footer-copy {
   outline: none;
 }
 /* =========================
-   لودینگ اسکرین ترکیبی
+   لودینگ اسکرین حرفه‌ای و لایت‌باکس
+========================= */
+
+/* لودینگ اسکرین */
+#loading-screen {
+  position: fixed;
+  top:0; left:0;
+  width:100%;
+  height:100%;
+  background:#000;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  z-index:100;
+  overflow: hidden;
+}
+
+#loading-screen video#loading-video {
+  position:absolute;
+  top:0; left:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  z-index:0;
+  filter: brightness(0.5);
+  transition: filter 0.3s ease;
+}
+
+.spinner-container {
+  position:relative;
+  z-index:1;
+  display:flex;
+  gap:10px;
+}
+
+.spinner {
+  width:20px;
+  height:20px;
+  border:3px solid #00d4ff;
+  border-top-color:transparent;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+
+.spinner:nth-child(2) { animation-delay: 0.2s; }
+.spinner:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+#loading-screen p {
+  color:#fff;
+  margin-top:15px;
+  font-size:1rem;
+  font-weight:bold;
+  z-index:1;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.8);
+}
+/* =========================
+   لودینگ اسکرین (حرفه‌ای)
 ========================= */
 #loading-screen {
   position: fixed;
@@ -1032,71 +1094,41 @@ footer .footer-copy {
   visibility: hidden;
 }
 
-/* ویدیو پس‌زمینه */
-#loading-screen video#loading-video {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 0;
-  filter: brightness(0.5); /* کمی تاریک برای وضوح اسپینر */
-  transition: filter 0.3s ease;
-}
-
-/* ویدیو اصلی شناور */
 #loading-video {
   width: 200px;
   height: auto;
   margin-bottom: 20px;
   animation: float 2s ease-in-out infinite;
+
+  /* شفاف و بدون مات بودن */
+  filter: none;
   background: transparent;
-  z-index: 1;
 }
 
-/* انیمیشن شناور */
 @keyframes float {
   0%, 100% { transform: translateY(0);}
   50% { transform: translateY(-10px);}
 }
 
-/* اسپینر حرفه‌ای */
 .spinner-container {
-  position: relative;
-  z-index: 1;
   display: flex;
   gap: 10px;
   margin-bottom: 20px;
 }
 
 .spinner {
-  width: 20px;
-  height: 20px;
-  border: 3px solid #00d4ff;
-  border-top-color: transparent;
+  width: 15px;
+  height: 15px;
+  border: 3px solid #fff;
+  border-top: 3px solid transparent;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 
   /* افکت سایه و حجم */
-  box-shadow: 0 0 5px #00d4ff, 0 0 10px #00d4ff, 0 0 15px #00d4ff;
+  box-shadow: 0 0 5px #fff, 0 0 10px #ff0055, 0 0 15px #ff0055;
 }
 
-.spinner:nth-child(2) { animation-delay: 0.2s; }
-.spinner:nth-child(3) { animation-delay: 0.4s; }
-
-/* چرخش اسپینر */
 @keyframes spin {
   0% { transform: rotate(0deg);}
   100% { transform: rotate(360deg);}
-}
-
-/* متن لودینگ */
-#loading-screen p {
-  color: #fff;
-  margin-top: 15px;
-  font-size: 1rem;
-  font-weight: bold;
-  z-index: 1;
-  text-shadow: 0 2px 6px rgba(0,0,0,0.8);
 }
