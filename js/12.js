@@ -310,7 +310,7 @@ function initGallery({ galleryId, btnId, manualData, fetchApiFn, pageSize = 8 })
     btn.addEventListener("click", renderNext);
   }
 
-  loadData();
+  loadData(); 
 }
 
 /* ------------------ MANUAL DATA ------------------ */
