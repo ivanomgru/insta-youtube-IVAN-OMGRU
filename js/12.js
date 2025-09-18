@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const nextBtn = lightbox ? lightbox.querySelector('.next') : null;
   let images = [];
   let links = [];
-  let pages = []; // اضافه شد: آرایه لینک‌های داخلی (data-page)
+  let pageLinks = []; // ← اضافه شد
   let currentIndex = 0;
   // جمع‌آوری تصاویر و لینک‌ها به‌صورت داینامیک (event delegation)
   document.addEventListener('click', (e) => {
@@ -29,7 +29,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const a = c.querySelector('a');
         return a ? a.href : '#';
       });
-      pages = cards.map(c => c.dataset.page || ''); // <-- اضافه شد: خواندن data-page از هر کارت
+      // ← ساخت/به‌روزرسانی آرایه pageLinks از data-page-link روی <a>
+      pageLinks = cards.map(c => {
+        const a = c.querySelector('a');
+        // اولویت: data-page-link (اگر موجود باشد) -> fallback به href -> fallback به '#'
+        return a ? (a.getAttribute('data-page-link') || a.href || '#') : '#';
+      });
+
       currentIndex = cards.indexOf(card);
       if (lightbox) openLightbox();
     }
@@ -52,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!link) {
         link = document.createElement('a');
         link.className = 'lightbox-link';
-        link.target = '_self'; // تغییر به باز شدن در همان تب برای صفحات داخلی
+        link.target = '_blank';
         link.rel = 'noopener noreferrer';
         // استایل‌های موقت (ترجیحاً در CSS قرار بگیرند)
         link.style.position = 'absolute';
@@ -67,9 +73,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const contentEl = lightbox.querySelector('.lightbox-content');
         if (contentEl) contentEl.appendChild(link);
       }
-      // اولویت: page (داخلی) -> external -> '#'
-      const pageHref = (pages && pages[currentIndex]) ? pages[currentIndex] : (links[currentIndex] || '#');
-      link.href = pageHref;
+      // ← اکنون از pageLinks استفاده می‌کند (اگر موجود نبود، '#' خواهد بود)
+      link.href = pageLinks[currentIndex] || '#';
       link.innerText = lang === 'ru' ? 'Смотрите сейчас!' : 'هم اکنون مشاهده کنید !';
       link.setAttribute('aria-label', lang === 'ru' ? 'Смотрите сейчас!' : 'هم اکنون مشاهده کنید !');
 
@@ -96,16 +101,14 @@ document.addEventListener('DOMContentLoaded', () => {
   if (overlay) overlay.addEventListener('click', closeLightbox);
   if (prevBtn) prevBtn.addEventListener('click', prevImage);
   if (nextBtn) nextBtn.addEventListener('click', nextImage);
-  // کلیک روی تصویر داخل لایت‌باکس → باز کردن لینک (اولویت به صفحه داخلی)؛ Ctrl/Cmd در تب جدید
+  // کلیک روی تصویر داخل لایت‌باکس → باز کردن لینک فقط با Ctrl/Cmd
   if (lightboxImg) {
     lightboxImg.addEventListener('click', (e) => {
-      const pageHref = (pages && pages[currentIndex]) ? pages[currentIndex] : (links[currentIndex] || '#');
       if (e.ctrlKey || e.metaKey) {
-        window.open(pageHref, '_blank', 'noopener,noreferrer');
+        window.open(links[currentIndex] || '#', '_blank', 'noopener,noreferrer');
         return;
       }
-      // بدون نگه داشتن کلید، به صفحهٔ داخلی (یا fallback) هدایت شود
-      window.location.href = pageHref;
+      // در حالت عادی کلیک روی تصویر فقط تعامل درون لایت‌باکس را حفظ می‌کند
     });
   }
   // Keyboard navigation
@@ -197,8 +200,8 @@ if (document.readyState === 'loading') {
 }
 function renderCard(item) {
   return `
-    <article class="media-card" role="listitem" tabindex="0" data-page="${item.pageLink || ''}" data-external="${item.link || '#'}">
-      <a href="${item.link}" target="_blank" rel="noopener noreferrer">
+    <article class="media-card" role="listitem" tabindex="0">
+      <a href="${item.link}" data-page-link="${item.pageLink || ''}" target="_blank" rel="noopener noreferrer">
         <img src="${item.thumb}" alt="${item.alt || item.fa || 'media'}" loading="lazy">
       </a>
       <p class="lang-fa">${item.fa || ''}</p>
@@ -320,16 +323,15 @@ function initGallery({ galleryId, btnId, manualData, fetchApiFn, pageSize = 8 })
 }
 /* ------------------ MANUAL DATA ------------------ */
 const YT_MANUAL = [
-  {"@id":"https://ivan-omgru.ir/media/youtube/1.jpg","thumb":"https://ivan-omgru.ir/media/youtube/1.jpg","link":"https://www.youtube.com/@ivan.omgruss","pageLink":"posts/youtube-1.html","fa":"ویدیو معرفی سایت ivan_omgru","ru":"Видео: Введение в сайт ivan_omgru"},
-  {"@id":"https://ivan-omgru.ir/media/youtube/2.jpg","thumb":"https://ivan-omgru.ir/media/youtube/2.jpg","link":"https://www.youtube.com/watch?v=abcd1234","pageLink":"posts/youtube-2.html","fa":"آموزش زبان روسی - درس 1","ru":"Урок русского языка - Урок 1"},
-  {"@id":"https://ivan-omgru.ir/media/youtube/3.jpg","thumb":"https://ivan-omgru.ir/media/youtube/3.jpg","link":"https://www.youtube.com/watch?v=efgh5678","pageLink":"posts/youtube-3.html","fa":"آموزش زبان روسی - درس 2","ru":"Урок русского языка - Урок 2"}
+  {"@id":"https://ivan-omgru.ir/media/youtube/1.jpg","thumb":"https://ivan-omgru.ir/media/youtube/1.jpg","link":"https://www.youtube.com/@ivan.omgruss","pageLink":"posts/youtube1.html","fa":"ویدیو معرفی سایت ivan_omgru","ru":"Видео: Введение в сайт ivan_omgru"},
+  {"@id":"https://ivan-omgru.ir/media/youtube/2.jpg","thumb":"https://ivan-omgru.ir/media/youtube/2.jpg","link":"https://www.youtube.com/watch?v=abcd1234","pageLink":"posts/youtube2.html","fa":"آموزش زبان روسی - درس 1","ru":"Урок русского языка - Урок 1"},
+  {"@id":"https://ivan-omgru.ir/media/youtube/3.jpg","thumb":"https://ivan-omgru.ir/media/youtube/3.jpg","link":"https://www.youtube.com/watch?v=efgh5678","pageLink":"posts/youtube3.html","fa":"آموزش زبان روسی - درس 2","ru":"Урок русского языка - Урок 2"}
 ];
 const IG_MANUAL = [
-  {"@id":"https://ivan-omgru.ir/media/instagram/1.jpg","thumb":"media/instagram/1.jpg","link":"https://www.instagram.com/p/ChnSyX3pC-7/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==","pageLink":"posts/instagram-1.html","fa":"پست 1","ru":"Пост 1"},
-  {"@id":"https://ivan-omgru.ir/media/instagram/2.jpg","thumb":"https://ivan-omgru.ir/media/instagram/2.jpg","link":"https://www.instagram.com/p/ChnSyX3pC-8/","pageLink":"posts/instagram-2.html","fa":"عکس کلاس آموزش زبان روسی","ru":"Фото с урока русского языка"},
-  {"@id":"https://ivan-omgru.ir/media/instagram/3.jpg","thumb":"https://ivan-omgru.ir/media/instagram/3.jpg","link":"https://www.instagram.com/p/ChnSyX3pC-9/","pageLink":"posts/instagram-3.html","fa":"تمرین و نکات مهم زبان روسی","ru":"Упражнения и важные моменты русского языка"}
+  {"@id":"https://ivan-omgru.ir/media/instagram/1.jpg","thumb":"media/instagram/1.jpg","link":"https://www.instagram.com/p/ChnSyX3pC-7/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==","pageLink":"posts/instagram1.html","fa":"پست 1","ru":"Пост 1"},
+  {"@id":"https://ivan-omgru.ir/media/instagram/2.jpg","thumb":"https://ivan-omgru.ir/media/instagram/2.jpg","link":"https://www.instagram.com/p/ChnSyX3pC-8/","pageLink":"posts/instagram2.html","fa":"عکس کلاس آموزش زبان روسی","ru":"Фото с урока русского языка"},
+  {"@id":"https://ivan-omgru.ir/media/instagram/3.jpg","thumb":"https://ivan-omgru.ir/media/instagram/3.jpg","link":"https://www.instagram.com/p/ChnSyX3pC-9/","pageLink":"posts/instagram3.html","fa":"تمرین و نکات مهم زبان روسی","ru":"Упражнения и важные моменты русского языка"}
 ];
-
 /* ------------------ API FETCHERS ------------------ */
 async function fetchYT() {
   try {
