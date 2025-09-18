@@ -216,6 +216,81 @@
         display: block;
     }
 }
+/* ====== Grid Sidebar ====== */
+#sidebarGrid {
+  display: flex;
+  justify-content: flex-start; /* سمت چپ */
+  margin: 30px 0;
+}
+
+/* ====== Sidebar ====== */
+.side {
+  width: 320px;
+  padding: 20px;
+  background: linear-gradient(145deg, #fff, #f0f0f5);
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.side:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+}
+
+.meta-line {
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+  color: #333;
+}
+.meta-line strong {
+  display: inline-block;
+  width: 90px;
+  color: #ff6b6b;
+}
+
+/* ====== دکمه‌ها ====== */
+.actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+.actions .btn {
+  padding: 12px 25px;
+  font-weight: bold;
+  border-radius: 30px;
+  text-decoration: none;
+  color: #fff;
+  background: linear-gradient(90deg, #ff7e5f, #feb47b);
+  box-shadow: 0 5px 15px rgba(255,126,95,0.4);
+  transition: all 0.3s ease;
+}
+.actions .btn:hover {
+  transform: scale(1.05) rotate(-1deg);
+  box-shadow: 0 8px 25px rgba(255,126,95,0.6);
+}
+
+.actions .btn.secondary {
+  background: linear-gradient(90deg, #6a11cb, #2575fc);
+  box-shadow: 0 5px 15px rgba(38,82,255,0.4);
+}
+.actions .btn.secondary:hover {
+  transform: scale(1.05) rotate(1deg);
+  box-shadow: 0 8px 25px rgba(38,82,255,0.6);
+}
+
+/* ====== موبایل ====== */
+@media (max-width: 767px) {
+  #sidebarGrid {
+    justify-content: center;
+  }
+  .side {
+    width: 90%;
+  }
+  .actions {
+    justify-content: center;
+  }
+}
 </style>
 
     <body>
@@ -278,15 +353,39 @@
             </div>
         </section>
 
-        <section class="blog-detail pt-100 pb-100">
+        <section class="blog-detail pt-100 pb-100" style="
+            background-image: url('images/background/ivanomgru.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+            ">
             <div class="container">
                 <div class="row">
                     <!-- Blog Content -->
                     <div class="col-lg-8 offset-lg-2">
-                        <!-- Blog Image -->
+                        <!-- Blog Imagoe -->
                         <div class="blog-image">
                            <img src="https://insta.ivan-omgru.ir/media/instagram/1.jpg" alt="آموزش زبان روسی توسط ابوالفضل شهاب"data-fa-alt="آموزش زبان روسی توسط ابوالفضل شهاب"data-ru-alt="Обучение русскому языку Абульфазом Шахабом">
                         </div>
+                        <div class="grid" id="sidebarGrid">
+                            <!-- sidebar -->
+                            <aside class="side" aria-label="اطلاعات">
+                                <div class="meta-line">
+                                   <strong data-fa="دسته" data-ru="Категория">دسته:</strong>
+                                   <span id="category">معرفی</span>
+                                </div>
+                                <div class="meta-line">
+                                  <strong data-fa="مدت زمان" data-ru="Продолжительность">مدت زمان:</strong>
+                                  <span id="duration">—</span>
+                                </div>
+                            </aside>
+                        </div>
+                        <div class="actions">
+                          <!-- change links below -->
+                           <a class="btn" id="openLink" href="#" target="_blank" rel="noopener">مشاهده در اینستاگرام</a>
+                           <a class="btn secondary" id="watchLink" href="#" target="_blank" rel="noopener">مشاهده ویدیو در یوتیوب</a>
+                        </div>                        
                         <!-- Blog Heading -->
                         <div class="blog-heading">
                             <h2 data-fa="آموزش جامع زبان روسی با ابوالفضل شهاب (Ivan Omgru)"data-ru="Полное обучение русскому языку с Абульфазом Шахабом (Ivan Omgru)">
@@ -373,7 +472,7 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </section>      
         <!-- Footer Start -->
         <footer id="footer" class="pt-50 pb-50">
             <div class="container">
@@ -381,7 +480,7 @@
                     <!-- ستون اول: متن و اطلاعات نویسنده -->
                     <div class="col-md-3 col-sm-6 mb-3">
                         <div class="contact-info">
-                         <h4>ivan.omgru</h4>     
+                         <h4 style="color:white;transition:all 0.3s;" onmouseover="this.style.color='green';this.style.fontWeight='bold';" onmouseout="this.style.color='white';this.style.fontWeight='';">ivan.omgru</h4>  
                           <p class="footer-text lang" data-fa="«ممنون هستم از همراهی شما.»" data-ru="«Спасибо за вашу поддержку.»">
                            «ممنون هستم از همراهی شما.»
                           </p>
@@ -397,30 +496,55 @@
                             <p class="footer-text lang" data-fa="ابوالفضل شهاب | IVAN.OMGRU" data-ru="Абульфазль Шахаб | IVAN.OMGRU">
                                <a href="https://insta.ivan-omgru.ir" target="_blank" class="footer-link">ابوالفضل شهاب | IVAN.OMGRU</a>
                             </p>
-                           <h5 class="lang" data-fa="تلفن" data-ru="Телефон">تلفن:</h5>
-                           <p class="lang" data-fa="(+98) 123 456 7890" data-ru="(+98) 123 456 7890">(+98) 123 456 7890</p>
                         </div>
                     </div>
                     <!-- ستون سوم: ایمیل -->
                     <div class="col-md-3 col-sm-6 mb-3">
-                       <div class="contact-info">
-                          <h5 class="lang" data-fa="ایمیل" data-ru="Эл. почта">ایمیل</h5>
-                            <p class="lang" data-fa="info@example.com" data-ru="info@example.com">info@example.com</p>
+                        <div class="contact-info">
+                            <h5 class="lang" data-fa="ایمیل" data-ru="Эл. почта">ایمیل</h5>
+                            <p class="lang" data-fa="loverussian62@gmail.com" data-ru="loverussian62@gmail.com">
+                                <a href="mailto:loverussian62@gmail.com"
+                                  style="transition: all 0.3s;"
+                                   onmouseover="this.style.color='green'; this.style.fontWeight='bold';"
+                                   onmouseout="this.style.color=''; this.style.fontWeight='';">
+                                    loverussian62@gmail.com
+                                </a>
+                            </p>
                         </div>
                     </div>
+
                     <!-- ستون چهارم: آدرس -->
                     <div class="col-md-3 col-sm-6 mb-3">
                         <div class="contact-info">
-                          <h5 class="lang" data-fa="آدرس" data-ru="Адрес">آدرس</h5>
-                           <p class="lang" data-fa="ارتباط با من:" data-ru="Связь со мной:">ارتباط با من:</p>
-                           <a href="https://ivan-omgru.ir" class="lang" data-fa="سایت اصلی" data-ru="Официальный сайт">سایت اصلی</a>
-                           <a href="https://resume.ivan-omgru.ir" class="lang" data-fa="رزومه" data-ru="Резюме">رزومه</a> |
-                           <a href="https://insta.ivan-omgru.ir" class="lang" data-fa="اینستاگرام" data-ru="Инстаграм">اینستاگرام</a> |
-                           <a href="https://youtube.ivan-omgru.ir" class="lang" data-fa="یوتیوب" data-ru="YouTube">یوتیوب</a>
-                       </div>
+                            <h5 class="lang" data-fa="آدرس" data-ru="Адрес">آدرس</h5>
+                            <p class="lang" data-fa="ارتباط با من:" data-ru="Связь со мной:">ارتباط با من:</p>
+                            <a href="https://ivan-omgru.ir" class="lang"
+                             style="transition: all 0.3s;"
+                             onmouseover="this.style.color='green'; this.style.fontWeight='bold';"
+                             onmouseout="this.style.color=''; this.style.fontWeight='';">
+                               سایت اصلی
+                            </a> |
+                            <a href="https://resume.ivan-omgru.ir" class="lang"
+                             style="transition: all 0.3s;"
+                             onmouseover="this.style.color='green'; this.style.fontWeight='bold';"
+                             onmouseout="this.style.color=''; this.style.fontWeight='';">
+                               رزومه
+                            </a> |
+                            <a href="https://insta.ivan-omgru.ir" class="lang"
+                             style="transition: all 0.3s;"
+                             onmouseover="this.style.color='green'; this.style.fontWeight='bold';"
+                             onmouseout="this.style.color=''; this.style.fontWeight='';">
+                             اینستاگرام
+                            </a> |
+                            <a href="https://youtube.ivan-omgru.ir" class="lang"
+                             style="transition: all 0.3s;"
+                             onmouseover="this.style.color='green'; this.style.fontWeight='bold';"
+                             onmouseout="this.style.color=''; this.style.fontWeight='';">
+                               یوتیوب
+                            </a>
+                        </div>
                     </div>
                 </div>
-
                 <!-- شبکه‌های اجتماعی -->
                 <div class="row justify-content-center pt-20 text-center">
                     <ul class="footer-logos list-inline">
