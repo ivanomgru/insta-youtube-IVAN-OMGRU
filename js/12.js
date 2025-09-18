@@ -323,14 +323,14 @@ function initGallery({ galleryId, btnId, manualData, fetchApiFn, pageSize = 8 })
 }
 /* ------------------ MANUAL DATA ------------------ */
 const YT_MANUAL = [
-  {"@id":"https://ivan-omgru.ir/media/youtube/1.jpg","thumb":"https://ivan-omgru.ir/media/youtube/1.jpg","link":"https://www.youtube.com/@ivan.omgruss","pageLink":"posts/youtube1.html","fa":"ویدیو معرفی سایت ivan_omgru","ru":"Видео: Введение в сайт ivan_omgru"},
-  {"@id":"https://ivan-omgru.ir/media/youtube/2.jpg","thumb":"https://ivan-omgru.ir/media/youtube/2.jpg","link":"https://www.youtube.com/watch?v=abcd1234","pageLink":"posts/youtube2.html","fa":"آموزش زبان روسی - درس 1","ru":"Урок русского языка - Урок 1"},
-  {"@id":"https://ivan-omgru.ir/media/youtube/3.jpg","thumb":"https://ivan-omgru.ir/media/youtube/3.jpg","link":"https://www.youtube.com/watch?v=efgh5678","pageLink":"posts/youtube3.html","fa":"آموزش زبان روسی - درس 2","ru":"Урок русского языка - Урок 2"}
+  {"@id":"https://insta.ivan-omgru.ir/media/youtube/1.jpg","thumb":"https://insta.ivan-omgru.ir/media/youtube/1.jpg","link":"https://www.youtube.com/@ivan.omgruss","pageLink":"https://ivan-omgru.ir/posts/youtube1.html","fa":"ویدیو معرفی سایت ivan_omgru","ru":"Видео: Введение в сайт ivan_omgru"},
+  {"@id":"https://insta.ivan-omgru.ir/media/youtube/2.jpg","thumb":"https://insta.ivan-omgru.ir/media/youtube/2.jpg","link":"https://www.youtube.com/watch?v=abcd1234","pageLink":"https://insta.ivan-omgru.ir/posts/youtube2.html","fa":"آموزش زبان روسی - درس 1","ru":"Урок русского языка - Урок 1"},
+  {"@id":"https://insta.ivan-omgru.ir/media/youtube/3.jpg","thumb":"https://insta.ivan-omgru.ir/media/youtube/3.jpg","link":"https://www.youtube.com/watch?v=efgh5678","pageLink":"https://insta.ivan-omgru.ir/posts/youtube3.html","fa":"آموزش زبان روسی - درس 2","ru":"Урок русского языка - Урок 2"}
 ];
 const IG_MANUAL = [
-  {"@id":"https://ivan-omgru.ir/media/instagram/1.jpg","thumb":"media/instagram/1.jpg","link":"https://www.instagram.com/p/ChnSyX3pC-7/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==","pageLink":"posts/instagram1.html","fa":"پست 1","ru":"Пост 1"},
-  {"@id":"https://ivan-omgru.ir/media/instagram/2.jpg","thumb":"https://ivan-omgru.ir/media/instagram/2.jpg","link":"https://www.instagram.com/p/ChnSyX3pC-8/","pageLink":"posts/instagram2.html","fa":"عکس کلاس آموزش زبان روسی","ru":"Фото с урока русского языка"},
-  {"@id":"https://ivan-omgru.ir/media/instagram/3.jpg","thumb":"https://ivan-omgru.ir/media/instagram/3.jpg","link":"https://www.instagram.com/p/ChnSyX3pC-9/","pageLink":"posts/instagram3.html","fa":"تمرین و نکات مهم زبان روسی","ru":"Упражнения и важные моменты русского языка"}
+  {"@id":"https://insta.ivan-omgru.ir/media/instagram/1.jpg","thumb":"https://insta.ivan-omgru.ir/media/instagram/1.jpg","link":"https://www.instagram.com/p/ChnSyX3pC-7/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==","pageLink":"posts/instagram1.html","fa":"پست 1","ru":"Пост 1"},
+  {"@id":"https://insta.ivan-omgru.ir/media/instagram/2.jpg","thumb":"https://insta.ivan-omgru.ir/media/instagram/2.jpg","link":"https://www.instagram.com/p/ChnSyX3pC-8/","pageLink":"https://insta.ivan-omgru.ir/posts/instagram2.html","fa":"عکس کلاس آموزش زبان روسی","ru":"Фото с урока русского языка"},
+  {"@id":"https://insta.ivan-omgru.ir/media/instagram/3.jpg","thumb":"https://insta.ivan-omgru.ir/media/instagram/3.jpg","link":"https://www.instagram.com/p/ChnSyX3pC-9/","pageLink":"https://insta.ivan-omgru.ir/posts/instagram3.html","fa":"تمرین و نکات مهم زبان روسی","ru":"Упражнения и важные моменты русского языка"}
 ];
 /* ------------------ API FETCHERS ------------------ */
 async function fetchYT() {
@@ -430,4 +430,5 @@ function showGalleryError(galleryId, message){
   g.innerHTML = '';
   g.appendChild(el);
 }
+
 
