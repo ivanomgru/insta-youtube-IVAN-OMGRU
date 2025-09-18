@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (contentEl) contentEl.appendChild(link);
       }
       // ← اکنون از pageLinks استفاده می‌کند (اگر موجود نبود، '#' خواهد بود)
-      link.href = pageLinks[currentIndex] || '#';
+      link.href = pageLinks[currentIndex] || links[currentIndex] || '#';
       link.innerText = lang === 'ru' ? 'Смотрите сейчас!' : 'هم اکنون مشاهده کنید !';
       link.setAttribute('aria-label', lang === 'ru' ? 'Смотрите сейчас!' : 'هم اکنون مشاهده کنید !');
 
@@ -430,3 +430,4 @@ function showGalleryError(galleryId, message){
   g.innerHTML = '';
   g.appendChild(el);
 }
+
