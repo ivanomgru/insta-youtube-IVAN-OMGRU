@@ -105,7 +105,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (lightboxImg) {
     lightboxImg.addEventListener('click', (e) => {
       if (e.ctrlKey || e.metaKey) {
-        window.open(links[currentIndex] || '#', '_blank', 'noopener,noreferrer');
+        // تغییر: اکنون سعی می‌کنیم از لینک داخل لایت‌باکس استفاده کنیم (که resolve شده است)
+        const lbLink = lightbox ? lightbox.querySelector('.lightbox-link') : null;
+        const targetHref = lbLink ? (lbLink.href || pageLinks[currentIndex] || links[currentIndex] || '#') : (pageLinks[currentIndex] || links[currentIndex] || '#');
+        window.open(targetHref, '_blank', 'noopener,noreferrer');
         return;
       }
       // در حالت عادی کلیک روی تصویر فقط تعامل درون لایت‌باکس را حفظ می‌کند
@@ -199,9 +202,12 @@ if (document.readyState === 'loading') {
   handleLoading();
 }
 function renderCard(item) {
+  // تغییر: اگر pageLink وجود داره، همونو بذار تو href، وگرنه همون link رو بذار
+  const finalLink = item.pageLink && item.pageLink.trim() !== "" ? item.pageLink : item.link;
+
   return `
     <article class="media-card" role="listitem" tabindex="0">
-      <a href="${item.link}" data-page-link="${item.pageLink || ''}" target="_blank" rel="noopener noreferrer">
+      <a href="${finalLink}" data-page-link="${item.pageLink || ''}" target="_blank" rel="noopener noreferrer">
         <img src="${item.thumb}" alt="${item.alt || item.fa || 'media'}" loading="lazy">
       </a>
       <p class="lang-fa">${item.fa || ''}</p>
@@ -228,7 +234,7 @@ function initGallery({ galleryId, btnId, manualData, fetchApiFn, pageSize = 8 })
     DATA = apiData && apiData.length ? apiData : manualData || [];
 
     if (!DATA.length) {
-      gallery.innerHTML = '<div class="api-error"><span class="lang-fa">هیچ پستی موجود نیست</span><span class="lang-ru">Нет постов</span></div>';
+      gallery.innerHTML = '<div class="api-error"><span class="lang-fa">هیچ پستی موجود نیست</span><span class="lang-ру">Нет постов</span></div>';
       if (btn) btn.style.display = 'none';
       return;
     }
@@ -314,7 +320,7 @@ function initGallery({ galleryId, btnId, manualData, fetchApiFn, pageSize = 8 })
     btn.removeEventListener('click', renderNext);
     btn.innerHTML = `
       <span class="lang-fa">نمایش بیشتر</span>
-      <span class="lang-ru">Показать больше</span>
+      <span class="lang-ру">Показать больше</span>
     `;
     btn.addEventListener("click", renderNext);
   }
@@ -323,7 +329,7 @@ function initGallery({ galleryId, btnId, manualData, fetchApiFn, pageSize = 8 })
 }
 /* ------------------ MANUAL DATA ------------------ */
 const YT_MANUAL = [
-  {"@id":"https://youtube.ivan-omgru.ir/media/youtube/1.jpg","thumb":"https://youtube.ivan-omgru.ir/media/youtube/1.jpg","link":"https://www.youtube.com/@ivan.omgruss","pageLink":"https://youtube.ivan-omgru.ir/posts/youtube1.html","fa":"ویدیو معرفی سایت ivan_omgru","ru":"Видео: Введение в сайт ivan_omgru"}
+  {"@id":"https://youtube.ivan-omgru.ir/media/youtube/1.jpg","thumb":"https://youtube.ivan-omgru.ir/media/youtube/1.jpg","link":"https://www.youtube.com/@ivan.omgruss","pageLink":"https://www.youtube.com/@ivan.omgruss","fa":"ویدیو معرفی سایت ivan_omgru","ru":"Видео: Введение в сайт ivan_omgru"}
 ];
 const IG_MANUAL = [
   {"@id":"https://insta.ivan-omgru.ir/media/instagram/1.jpg","thumb":"https://insta.ivan-omgru.ir/media/instagram/1.jpg","link":"https://www.instagram.com/p/ChnSyX3pC-7/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==","pageLink":"https://insta.ivan-omgru.ir/posts/instagram1.html","fa":"پست 1","ru":"Пост 1"}
@@ -426,6 +432,3 @@ function showGalleryError(galleryId, message){
   g.innerHTML = '';
   g.appendChild(el);
 }
-
-
-
