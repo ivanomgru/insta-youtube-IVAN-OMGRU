@@ -612,4 +612,3 @@ function initGallery({ galleryId, btnId, manualData, fetchApiFn, pageSize = 8, i
     });
   });
 })();
-
