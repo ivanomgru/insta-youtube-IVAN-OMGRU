@@ -1,4 +1,4 @@
-اراستی الان با هر تغیری در پست های دستی خودش اسکیما را تغیر میده یا حتی با اضافه کردن پست document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
   // گاردها برای جلوگیری از خطا اگر المان‌ها موجود نباشن
   const lightbox = document.getElementById('lightbox');
   const lightboxImg = lightbox ? lightbox.querySelector('img') : null;
@@ -371,55 +371,15 @@ document.addEventListener("DOMContentLoaded", () => {
     galleryId: "ytGallery",
     btnId: "loadMoreYT",
     manualData: YT_MANUAL,
-    fetchApiFn: fetchYT
+    fetchApiFn: fetchYT,
+    isVideo: true
   });
   initGallery({
     galleryId: "igGallery",
     btnId: "loadMoreIG",
     manualData: IG_MANUAL,
-    fetchApiFn: fetchIG
-  });
-});
-function generateGallerySchema(manualData, galleryType) {
-  if (!manualData || !manualData.length) return;
-
-  const items = manualData.map(item => ({
-    "@type": "MediaObject",
-    "name": item.fa || item.ru || "media item",
-    "contentUrl": item.link || item.pageLink || "",
-    "thumbnailUrl": item.thumb || "",
-    "description": item.fa || item.ru || "",
-    "url": item.pageLink || item.link || ""
-  }));
-
-  const schema = {
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    "name": galleryType === 'yt' ? "YouTube Gallery" : "Instagram Gallery",
-    "itemListElement": items.map((v, i) => ({
-      "@type": "ListItem",
-      "position": i + 1,
-      "url": v.url,
-      "item": v
-    }))
-  };
-
-  const script = document.createElement('script');
-  script.type = 'application/ld+json';
-  script.textContent = JSON.stringify(schema, null, 2);
-  document.head.appendChild(script);
-}
-
-// بعد از initGallery برای هر گالری فراخوانی کن
-document.addEventListener("DOMContentLoaded", () => {
-  generateGallerySchema(YT_MANUAL, 'yt');
-  generateGallerySchema(IG_MANUAL, 'ig');
-
-  // اگر نیاز داری API هم بارگذاری شد، می‌توانیم بعد از fetch داده‌ها هم دوباره فراخوانی کنیم
-  document.addEventListener('gallery:items-updated', (e) => {
-    const galleryId = e.detail.galleryId;
-    if (galleryId === 'ytGallery') generateGallerySchema(YT_MANUAL, 'yt');
-    if (galleryId === 'igGallery') generateGallerySchema(IG_MANUAL, 'ig');
+    fetchApiFn: fetchIG,
+    isVideo: false
   });
 });
 /* 1) استایل‌های پایه (در صورت نبود CSS خارجی) */
@@ -474,3 +434,182 @@ function showGalleryError(galleryId, message){
   g.innerHTML = '';
   g.appendChild(el);
 }
+
+/* =========================
+   HELPER: Generate JSON-LD Schema
+========================= */
+function updateGallerySchema(galleryId, isVideo = false) {
+  const gallery = document.getElementById(galleryId);
+  if (!gallery) return;
+
+  const items = Array.from(gallery.querySelectorAll('.media-card')).map((card, index) => {
+    const a = card.querySelector('a');
+    const img = card.querySelector('img');
+    const fa = card.querySelector('.lang-fa')?.innerText || '';
+    const ru = card.querySelector('.lang-ru')?.innerText || '';
+
+    return {
+      "@type": isVideo ? "VideoObject" : "ImageObject",
+      "@id": a?.href || img?.src || '',
+      "url": a?.getAttribute('data-page-link') || a?.href || '',
+      "thumbnailUrl": img?.src || '',
+      "name": fa || ru || 'بدون عنوان',
+      "description": fa || ru || '',
+      "inLanguage": "fa"
+    };
+  });
+
+  if (!items.length) return;
+
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "itemListElement": items.map((item, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "item": item
+    }))
+  };
+
+  // بررسی وجود <script id="json-ld-{galleryId}">
+  const existing = document.getElementById('json-ld-' + galleryId);
+  if (existing) {
+    existing.textContent = JSON.stringify(schema, null, 2);
+  } else {
+    const s = document.createElement('script');
+    s.type = 'application/ld+json';
+    s.id = 'json-ld-' + galleryId;
+    s.textContent = JSON.stringify(schema, null, 2);
+    document.head.appendChild(s);
+  }
+}
+
+/* =========================
+   INTEGRATION WITH initGallery (overrides previous initGallery)
+========================= */
+function initGallery({ galleryId, btnId, manualData, fetchApiFn, pageSize = 8, isVideo = false }) {
+  const gallery = document.getElementById(galleryId);
+  const btn = document.getElementById(btnId);
+  if (!gallery) return;
+
+  let page = 0;
+  let DATA = [];
+  let currentOrder = "oldest";
+
+  async function loadData() {
+    let apiData = null;
+    try { if (typeof fetchApiFn === 'function') apiData = await fetchApiFn(); }
+    catch (e) { console.warn('API fail for', galleryId, e); }
+    DATA = apiData && apiData.length ? apiData : manualData || [];
+    if (!DATA.length) {
+      gallery.innerHTML = '<div class="api-error"><span class="lang-fa">هیچ پستی موجود نیست</span><span class="lang-ru">Нет постов</span></div>';
+      if (btn) btn.style.display = 'none';
+      return;
+    }
+    if (btn) btn.style.display = (DATA.length > pageSize) ? '' : 'none';
+    renderNext();
+  }
+
+  function renderNext() {
+    const start = page * pageSize;
+    let slice = currentOrder === "oldest" ? DATA.slice(start, start + pageSize) : [...DATA].reverse().slice(start, start + pageSize);
+    if (!slice.length) { if (btn) btn.style.display = 'none'; return; }
+    gallery.insertAdjacentHTML("beforeend", slice.map(renderCard).join(""));
+    page++;
+
+    // --- Update Schema after rendering ---
+    updateGallerySchema(galleryId, isVideo);
+
+    if (page * pageSize >= DATA.length && btn) btn.style.display = "none";
+  }
+
+  // Button and sorting logic as before...
+  const existingNewest = gallery.parentElement.querySelector('.btn-sort.newest-' + galleryId);
+  const existingOldest = gallery.parentElement.querySelector('.btn-sort.oldest-' + galleryId);
+  if (!existingNewest) {
+    const newestBtn = document.createElement("button");
+    newestBtn.type = 'button';
+    newestBtn.className = `btn-sort newest-${galleryId}`;
+    newestBtn.setAttribute('aria-controls', galleryId);
+    newestBtn.innerHTML = `<span class="lang-fa">جدیدترین‌ها</span><span class="lang-ru">Сначала новые</span>`;
+    newestBtn.addEventListener("click", () => {
+      gallery.innerHTML = "";
+      currentOrder = "newest";
+      page = 0;
+      if (btn) btn.style.display = (DATA.length > pageSize) ? '' : 'none';
+      renderNext();
+    });
+    gallery.parentElement.insertBefore(newestBtn, gallery);
+  }
+
+  if (!existingOldest) {
+    const oldestBtn = document.createElement("button");
+    oldestBtn.type = 'button';
+    oldestBtn.className = `btn-sort oldest-${galleryId}`;
+    oldestBtn.setAttribute('aria-controls', galleryId);
+    oldestBtn.innerHTML = `<span class="lang-fa">قدیمی‌ترین‌ها</span><span class="lang-ru">Сначала старые</span>`;
+    oldestBtn.addEventListener("click", () => {
+      gallery.innerHTML = "";
+      currentOrder = "oldest";
+      page = 0;
+      if (btn) btn.style.display = (DATA.length > pageSize) ? '' : 'none';
+      renderNext();
+    });
+    gallery.parentElement.insertBefore(oldestBtn, gallery);
+  }
+
+  if (btn) {
+    btn.removeEventListener('click', renderNext);
+    btn.innerHTML = `<span class="lang-fa">نمایش بیشتر</span><span class="lang-ru">Показать больше</span>`;
+    btn.addEventListener("click", renderNext);
+  }
+
+  loadData();
+}
+
+/* =========================
+   SCHEMA AUTO-UPDATES
+   - Debounced update when gallery:items-updated fires
+   - Initial pass on DOMContentLoaded for known galleries
+========================= */
+(function () {
+  const _schemaTimers = Object.create(null);
+
+  function debouncedUpdateGallerySchema(galleryId, isVideo = false, delay = 150) {
+    if (!galleryId) return;
+    if (_schemaTimers[galleryId]) clearTimeout(_schemaTimers[galleryId]);
+    _schemaTimers[galleryId] = setTimeout(() => {
+      try {
+        updateGallerySchema(galleryId, isVideo);
+      } catch (err) {
+        console.warn('updateGallerySchema failed for', galleryId, err);
+      } finally {
+        delete _schemaTimers[galleryId];
+      }
+    }, delay);
+  }
+
+  // Listen to internal event dispatched by renderNext()
+  document.addEventListener('gallery:items-updated', (e) => {
+    try {
+      const detail = e && e.detail ? e.detail : {};
+      const galleryId = detail.galleryId || null;
+      if (!galleryId) return;
+      const isVideo = (/yt|youtube/i).test(galleryId); // heuristic
+      debouncedUpdateGallerySchema(galleryId, isVideo);
+    } catch (err) {
+      console.warn('gallery:items-updated handler error', err);
+    }
+  });
+
+  // Initial schema pass for known galleries (runs after DOM ready)
+  document.addEventListener('DOMContentLoaded', () => {
+    const knownGalleries = ['ytGallery', 'igGallery'];
+    knownGalleries.forEach(gid => {
+      const el = document.getElementById(gid);
+      if (!el) return;
+      const isVideo = (/yt|youtube/i).test(gid);
+      debouncedUpdateGallerySchema(gid, isVideo, 50);
+    });
+  });
+})();
