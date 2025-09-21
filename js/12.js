@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+اراستی الان با هر تغیری در پست های دستی خودش اسکیما را تغیر میده یا حتی با اضافه کردن پست document.addEventListener('DOMContentLoaded', () => {
   // گاردها برای جلوگیری از خطا اگر المان‌ها موجود نباشن
   const lightbox = document.getElementById('lightbox');
   const lightboxImg = lightbox ? lightbox.querySelector('img') : null;
@@ -378,6 +378,48 @@ document.addEventListener("DOMContentLoaded", () => {
     btnId: "loadMoreIG",
     manualData: IG_MANUAL,
     fetchApiFn: fetchIG
+  });
+});
+function generateGallerySchema(manualData, galleryType) {
+  if (!manualData || !manualData.length) return;
+
+  const items = manualData.map(item => ({
+    "@type": "MediaObject",
+    "name": item.fa || item.ru || "media item",
+    "contentUrl": item.link || item.pageLink || "",
+    "thumbnailUrl": item.thumb || "",
+    "description": item.fa || item.ru || "",
+    "url": item.pageLink || item.link || ""
+  }));
+
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": galleryType === 'yt' ? "YouTube Gallery" : "Instagram Gallery",
+    "itemListElement": items.map((v, i) => ({
+      "@type": "ListItem",
+      "position": i + 1,
+      "url": v.url,
+      "item": v
+    }))
+  };
+
+  const script = document.createElement('script');
+  script.type = 'application/ld+json';
+  script.textContent = JSON.stringify(schema, null, 2);
+  document.head.appendChild(script);
+}
+
+// بعد از initGallery برای هر گالری فراخوانی کن
+document.addEventListener("DOMContentLoaded", () => {
+  generateGallerySchema(YT_MANUAL, 'yt');
+  generateGallerySchema(IG_MANUAL, 'ig');
+
+  // اگر نیاز داری API هم بارگذاری شد، می‌توانیم بعد از fetch داده‌ها هم دوباره فراخوانی کنیم
+  document.addEventListener('gallery:items-updated', (e) => {
+    const galleryId = e.detail.galleryId;
+    if (galleryId === 'ytGallery') generateGallerySchema(YT_MANUAL, 'yt');
+    if (galleryId === 'igGallery') generateGallerySchema(IG_MANUAL, 'ig');
   });
 });
 /* 1) استایل‌های پایه (در صورت نبود CSS خارجی) */
